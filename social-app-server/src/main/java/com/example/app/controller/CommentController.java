@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.app.dto.CommentDTO;
 import com.example.app.models.Comment;
 import com.example.app.models.User;
 import com.example.app.services.CommentService;
@@ -26,12 +27,12 @@ public class CommentController {
 	private UserService userService;
 
 	@PostMapping("/comment/post/{postId}")
-	public Comment createComment(@RequestBody Comment comment, @RequestHeader("Authorization") String jwt,
+	public CommentDTO createComment(@RequestBody Comment comment, @RequestHeader("Authorization") String jwt,
 			@PathVariable("postId") Long postId) throws Exception {
 
 		User user = userService.findUserByJwt(jwt);
 
-		Comment com = commentService.createComment(comment, postId, user.getId());
+		CommentDTO com = commentService.createComment(comment, postId, user.getId());
 
 		return com;
 	}

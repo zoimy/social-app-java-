@@ -132,6 +132,22 @@ export const searchUserByQueryAction = createAsyncThunk<
   }
 );
 
+export const getUserByIdAction = createAsyncThunk<
+  UserProps,
+	{userId: number},
+  { state: RootState; rejectValue: string }
+>(
+  "auth/getUserById",
+  async ({userId}, {  rejectWithValue }) => {
+    try {
+      const { data } = await api.get(`${BASE_URL}/api/users/${userId}`);
+      return data;
+    } catch (error: any) {
+      return rejectWithValue("getUserByIdAction  failed");
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,

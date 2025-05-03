@@ -20,12 +20,17 @@ export type PostProps = {
   user: UserProps;
 	liked: UserProps[]
 	createdAt: string;
+	likedUserIds?: number[]
 };
 
 export type CommentProps = {
+	id: number;
   postId: number;
+  userId: number;
   content: string;
   user: UserProps;
+  createdAt: string;
+	likedUserIds: []
 };
 
 type PostState = {

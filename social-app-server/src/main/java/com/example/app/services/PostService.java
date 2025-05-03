@@ -2,6 +2,7 @@ package com.example.app.services;
 
 import java.util.List;
 
+import com.example.app.dto.PostDTO;
 import com.example.app.models.Post;
 
 public interface PostService {
@@ -13,7 +14,7 @@ public interface PostService {
 
 	Post findPostById(Long postId) throws Exception;
 
-	List<Post> findAllPosts();
+	List<PostDTO> findAllPosts();
 
 	Post savedPost(Long postId, Long userId) throws Exception;
 

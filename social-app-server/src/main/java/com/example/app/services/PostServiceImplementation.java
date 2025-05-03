@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.app.dto.CommentDTO;
+import com.example.app.dto.PostDTO;
 import com.example.app.models.Post;
 import com.example.app.models.User;
 import com.example.app.repository.PostRepository;
@@ -72,8 +74,20 @@ public class PostServiceImplementation implements PostService {
 	}
 
 	@Override
-	public List<Post> findAllPosts() {
-		return postRepo.findAll();
+	public List<PostDTO> findAllPosts() {
+		List<Post> posts = postRepo.findAll();
+		return posts.stream().map(post -> new PostDTO(
+				post.getId(),
+				post.getCaption(),
+				post.getImage(),
+				post.getVideo(),
+				post.getCreatedAt(),
+				post.getLiked().stream().map(User::getId).toList(),
+				post.getComments().stream()
+						.map(comment -> new CommentDTO(comment.getId(), comment.getPost().getId(), comment.getUser().getId(),
+								comment.getContent(), comment.getCreatedAt(), comment.getLiked().stream().map(User::getId).toList()))
+						.toList()))
+				.toList();
 	}
 
 	@Override
@@ -112,7 +126,7 @@ public class PostServiceImplementation implements PostService {
 		}
 
 		postRepo.save(post);
-    userRepo.save(user);
+		userRepo.save(user);
 
 		return post;
 	}

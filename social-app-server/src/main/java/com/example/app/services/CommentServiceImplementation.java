@@ -2,18 +2,20 @@ package com.example.app.services;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.app.dto.CommentDTO;
 import com.example.app.models.Comment;
 import com.example.app.models.Post;
 import com.example.app.models.User;
+import com.example.app.repository.CommentRepository;
 import com.example.app.repository.PostRepository;
-import com.example.app.response.CommentRepository;
 
 @Service
-public class CommentServiceImplementation implements CommentService{
+public class CommentServiceImplementation implements CommentService {
 
 	@Autowired
 	private PostService postService;
@@ -28,25 +30,32 @@ public class CommentServiceImplementation implements CommentService{
 	private PostRepository postRepo;
 
 	@Override
-	public Comment createComment(Comment comment, Long postId, Long userId) throws Exception{
+	public CommentDTO createComment(Comment comment, Long postId, Long userId) throws Exception {
 
-		User user   = userService.findUserById(userId);
-		Post post  = postService.findPostById(postId);
+		User user = userService.findUserById(userId);
+		Post post = postService.findPostById(postId);
 
 		comment.setUser(user);
-		comment.setContent(comment.getContent());
+		comment.setPost(post);
 		comment.setCreatedAt(LocalDateTime.now());
 
 		Comment savedComment = commentRepo.save(comment);
 
-		post.getComments().add(savedComment);
-		postRepo.save(post);
+		CommentDTO commentDTO = new CommentDTO(
+				savedComment.getId(),
+				post.getId(),
+				user.getId(),
+				savedComment.getContent(),
+				savedComment.getCreatedAt(),
+				savedComment.getLiked().stream()
+						.map(likedUser -> likedUser.getId())
+						.collect(Collectors.toList()));
 
-		return savedComment;
+		return commentDTO;
 	}
 
 	@Override
-	public Comment findCommentById(Long commentId) throws Exception{
+	public Comment findCommentById(Long commentId) throws Exception {
 		Optional<Comment> com = commentRepo.findById(commentId);
 
 		if (com.isEmpty()) {
@@ -57,15 +66,16 @@ public class CommentServiceImplementation implements CommentService{
 	}
 
 	@Override
-	public Comment likeComment(Long commentId, Long userId) throws Exception{
+	public Comment likeComment(Long commentId, Long userId) throws Exception {
 		Comment comment = findCommentById(commentId);
 		User user = userService.findUserById(userId);
 
 		if (!comment.getLiked().contains(user)) {
 			comment.getLiked().add(user);
-		} else comment.getLiked().remove(user);
+		} else
+			comment.getLiked().remove(user);
 
 		return commentRepo.save(comment);
 	}
-	
+
 }

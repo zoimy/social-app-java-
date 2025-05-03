@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class Reels {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String title; 

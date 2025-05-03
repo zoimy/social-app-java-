@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.app.dto.PostDTO;
 import com.example.app.models.Post;
 import com.example.app.models.User;
 import com.example.app.response.ApiResponse;
@@ -66,10 +67,9 @@ public class PostController {
 	}
 
 	@GetMapping("/posts")
-	public ResponseEntity<List<Post>> findAllPosts() {
-		List<Post> posts =postService.findAllPosts();
-
-		return new ResponseEntity<>(posts, HttpStatus.OK);
+	public ResponseEntity<List<PostDTO>> findAllPosts() {
+		List<PostDTO> postResponses = postService.findAllPosts();
+    return new ResponseEntity<>(postResponses, HttpStatus.OK);
 	}
 
 	@PutMapping("/posts/save/{postId}")

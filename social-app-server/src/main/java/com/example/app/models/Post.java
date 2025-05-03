@@ -1,4 +1,4 @@
-	package com.example.app.models;
+package com.example.app.models;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -30,7 +31,7 @@ import lombok.NoArgsConstructor;
 public class Post {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String caption;
@@ -39,23 +40,18 @@ public class Post {
 	private LocalDateTime createdAt;
 
 	@ManyToOne
-	@JoinColumn(name = "user_id")
 	@JsonBackReference
 	private User user;
 
-	// @OneToMany
-	// @JsonIgnore
-	// private List<User> liked = new ArrayList<>();
-
-	@ManyToMany(mappedBy = "liked")
+	@ManyToMany()
 	@JsonIgnore
 	private List<User> liked = new ArrayList<>();
 
-	@ManyToMany(mappedBy = "savedPosts")
-	@JsonIgnore
+	@ManyToMany()
+	// @JsonIgnore
 	private List<User> savedByUsers = new ArrayList<>();
 
-	@OneToMany()
-	@JsonIgnore 
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
 	private List<Comment> comments = new ArrayList<>();
 }
